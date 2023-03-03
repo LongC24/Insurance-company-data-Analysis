@@ -1,4 +1,3 @@
-
 -- 解决当没有重复保单号无法运行
 SELECT Allianz_Annuity.`Received Date`      as SubmitDate,
        Company_Name.CommonName              as Company_Name,
@@ -39,3 +38,28 @@ where 1 = 1
 ;
 
 
+SELECT ANY_VALUE(Carrier), BA_policy_list.Plan
+FROM BA_policy_list
+where 1 = 1
+group by Plan;
+
+
+
+select Company_Name.CommonName   as Company_Name,
+       Company_Name.CommonName   as CommonName,
+       Product_Type.Company_Name as Company_NameProduct_Type,
+       Product_Type.Product_Name as Product_Name
+from Product_Type
+         join Company_Name
+              on Company_Name.FullName = Product_Type.Company_Name
+where 1 = 1
+;
+
+-- 插入新产品后  把 公司名更新为 公司名简称
+UPDATE Product_Type
+set Product_Type.Company_Name = (select Company_Name.CommonName
+                                 from Company_Name
+                                 where Company_Name.FullName = Product_Type.Company_Name)
+where Product_Type.Company_Name != (select Company_Name.CommonName
+                                    from Company_Name
+                                    where Company_Name.FullName = Product_Type.Company_Name);

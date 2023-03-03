@@ -67,3 +67,66 @@ where 1 = 1
                          having count(`Policy Number`) > 1)
   and 1 = 1
 ;
+
+SELECT Allianz_Annuity.`Received Date`      as SubmitDate,
+       Company_Name.CommonName              as Company_Name,
+       Allianz_Annuity.`Annuitant Name`     as Insured_Name,
+       Product_Type.Type                    as Product_Type,
+       Allianz_Annuity.`Policy Number`      as Policy_ID,
+       Allianz_Annuity.`Estimated Premium`  as Face_Amount,
+       Policy_Status.Status                 as Status,
+       Allianz_Annuity.`Product`            as Product_Name,
+       Allianz_Annuity.`Writing Agent Name` as Writing_Agent
+
+FROM Allianz_Annuity
+         join Company_Name
+              on Company_Name.FullName = 'Allianz Life Insurance Company of North America'
+         join Product_Type
+              on Product_Type.Product_Name = Allianz_Annuity.`Product`
+         join Policy_Status
+              on Policy_Status.Status = 'Unknown'
+where 1 = 1
+
+  and Allianz_Annuity.`Received Date`
+    > '2000-01-10'
+  and Allianz_Annuity.`Received Date`
+    < '2023-03-20'
+  and Allianz_Annuity.`Policy Number` = (select Allianz_Annuity.`Policy Number`
+                                         from Allianz_Annuity
+                                         group by Allianz_Annuity.`Policy Number`
+                                         having count(Allianz_Annuity.`Policy Number`) > 1);
+
+-- BA_policy_list.`Product Subcategory`
+-- 查询BA的表
+select BA_policy_list.`Submitted Date`  as Submit_Date,
+       Company_Name.CommonName          as Company_Name,
+       BA_policy_list.`Applicant Name`  as Insured_Name,
+       Product_Type.Type                as Product_Type,
+       -- 如果是年金那么 FaceAmount 是 0 需要用另外一个
+       If(Product_Type.Type = 'Annuity',
+          BA_policy_list.`Modal Premium`,
+          BA_policy_list.`Face Amount`) as Face_Amount,
+#        - -BA_policy_list.`Face Amount`  as Face_Amount,
+       BA_policy_list.Status            as Status,
+       BA_policy_list.Plan              as Product_Name,
+       BA_policy_list.`Agent Name`      as Agent_Name
+
+
+FROM BA_policy_list
+         join Product_Type
+              on Product_Type.Product_Name = BA_policy_list.Plan
+         join Company_Name
+              on Company_Name.FullName = BA_policy_list.Carrier
+where 1 = 1
+
+  and BA_policy_list.`Submitted Date`
+    > '2000-01-10'
+  and BA_policy_list.`Submitted Date`
+    < '2023-03-20'
+  and not  BA_policy_list.`Policy Number` = (select BA_policy_list.`Policy Number`
+                                        from BA_policy_list
+                                        group by BA_policy_list.`Policy Number`
+                                        having count(BA_policy_list.`Policy Number`) > 1)
+  and 1 = 1
+;
+
