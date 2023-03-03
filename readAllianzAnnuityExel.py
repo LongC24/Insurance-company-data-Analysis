@@ -18,10 +18,15 @@ print(df.head())
 
 # for i in df:
 #     print(df[i])
-
+print(df.info())
 # set the row Received Date   type to date
 df['Received Date'] = pd.to_datetime(df['Received Date'])
+df['Premium Received'] = df['Premium Received'].str.replace('$', '').str.replace(',', '')
+df['Premium Received'] = pd.to_numeric(df['Premium Received'])
 
+df['Estimated Premium'] = df['Estimated Premium'].str.replace('$', '').str.replace(',', '')
+df['Estimated Premium'] = pd.to_numeric(df['Estimated Premium'])
 
+print(df.info())
 # Save the Excel file to  CSV
 df.to_csv(outputFile, index=False)

@@ -19,9 +19,12 @@ print(df.head())
 # for i in df:
 #     print(df[i])
 
+print(df.info())
 # set the row Received Date   type to date
 df['Received Date'] = pd.to_datetime(df['Received Date'])
-
+df['FaceAmount'] = df['FaceAmount'].str.replace('$', '').str.replace(',', '')
+df['FaceAmount'] = pd.to_numeric(df['FaceAmount'])
+print(df.info())
 
 # Save the Excel file to  CSV
 df.to_csv(outputFile, index=False)
