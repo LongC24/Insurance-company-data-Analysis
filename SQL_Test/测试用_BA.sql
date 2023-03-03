@@ -106,7 +106,6 @@ select BA_policy_list.`Submitted Date`  as Submit_Date,
        If(Product_Type.Type = 'Annuity',
           BA_policy_list.`Modal Premium`,
           BA_policy_list.`Face Amount`) as Face_Amount,
-#        - -BA_policy_list.`Face Amount`  as Face_Amount,
        BA_policy_list.Status            as Status,
        BA_policy_list.Plan              as Product_Name,
        BA_policy_list.`Agent Name`      as Agent_Name
@@ -118,15 +117,60 @@ FROM BA_policy_list
          join Company_Name
               on Company_Name.FullName = BA_policy_list.Carrier
 where 1 = 1
+  -- 日期筛选
 
-  and BA_policy_list.`Submitted Date`
-    > '2000-01-10'
-  and BA_policy_list.`Submitted Date`
-    < '2023-03-20'
-  and not  BA_policy_list.`Policy Number` = (select BA_policy_list.`Policy Number`
-                                        from BA_policy_list
-                                        group by BA_policy_list.`Policy Number`
-                                        having count(BA_policy_list.`Policy Number`) > 1)
+#   and BA_policy_list.`Submitted Date`
+#     > '2000-01-10'
+#   and BA_policy_list.`Submitted Date`
+#     < '2023-03-20'
+  and not BA_policy_list.`Policy Number` = (select BA_policy_list.`Policy Number`
+                                            from BA_policy_list
+                                            group by BA_policy_list.`Policy Number`
+                                            having count(BA_policy_list.`Policy Number`) > 1)
   and 1 = 1
 ;
 
+
+-- 查询BA的表 全部加入
+select BA_policy_list.`Submitted Date`  as Submit_Date,
+       Company_Name.CommonName          as Company_Name,
+       BA_policy_list.`Applicant Name`  as Insured_Name,
+       Product_Type.Type                as Product_Type,
+       -- 如果是年金那么 FaceAmount 是 0 需要用另外一个
+       If(Product_Type.Type = 'Annuity',
+          BA_policy_list.`Modal Premium`,
+          BA_policy_list.`Face Amount`) as Face_Amount,
+       BA_policy_list.Status            as Status,
+       BA_policy_list.Plan              as Product_Name,
+       BA_policy_list.`Agent Name`      as Agent_Name
+FROM BA_policy_list
+         left join Product_Type
+                   on BA_policy_list.Plan = Product_Type.Product_Name
+         left join Company_Name
+                   on BA_policy_list.Carrier = Company_Name.FullName
+
+where true
+  -- 检查是否有Policy Number 重复的
+#   and BA_policy_list.`Policy Number` != (select BA_policy_list.`Policy Number`
+#                                          from BA_policy_list
+#                                          group by BA_policy_list.`Policy Number`
+#                                          having count(BA_policy_list.`Policy Number`) > 1)
+;
+
+
+-- 检查是否有新的公司名字没有被加入 Company_Name 表中
+select BA_policy_list.Carrier as Company_Name
+from BA_policy_list
+where BA_policy_list.Carrier not in (select Company_Name.FullName from Company_Name);
+
+-- 检查是否有Policy Number 重复的
+select BA_policy_list.`Policy Number` as Policy_Number
+from BA_policy_list
+group by BA_policy_list.`Policy Number`
+having count(BA_policy_list.`Policy Number`) > 1;
+
+
+select BA_policy_list.`Policy Number`
+from BA_policy_list
+group by BA_policy_list.`Policy Number`
+having count(BA_policy_list.`Policy Number`) > 1

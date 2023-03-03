@@ -15,21 +15,6 @@ order by submitted_date
 ;
 
 
--- 查询预先分单的 （即保单号有重复的）
-select submitted_date, `Policy #`, `Insured / Annuitant`, `Modal Premium`, Product, Agent
-FROM NLG_Policy_List_NewBusiness
-where 1 = 1
-  and submitted_date
-    > '2022-01-01'
-  and submitted_date
-    < '2023-02-28'
-  and `Policy #` = (select `Policy #`
-                    from NLG_Policy_List_NewBusiness
-                    group by `Policy #`
-                    having count(`Policy #`) > 1)
-  and 1 = 1
-;
-
 -- 单独查询其中有哪些保单是重复的
 select `Policy #`
 from NLG_Policy_List_NewBusiness
@@ -63,10 +48,10 @@ SELECT NLG_Policy_List_NewBusiness.submitted_date        as SubmitDate,
        NLG_Policy_List_NewBusiness.Product               as Product_Name,
        NLG_Policy_List_NewBusiness.Agent                 as Writing_Agent
 FROM NLG_Policy_List_NewBusiness
-         join Product_Type
-              on Product_Type.Product_Name = NLG_Policy_List_NewBusiness.Product
-         join Company_Name
-              on Company_Name.FullName = 'National Life Group'
+         left join Product_Type
+                   on Product_Type.Product_Name = NLG_Policy_List_NewBusiness.Product
+         left join Company_Name
+                   on Company_Name.FullName = 'National Life Group'
 
 where 1 = 1
 
@@ -75,14 +60,26 @@ where 1 = 1
 #   and submitted_date
 #     < '2023-02-28'
 
-  and not `Policy #` = (select `Policy #`
-                    from NLG_Policy_List_NewBusiness
-                    group by `Policy #`
-                    having count(`Policy #`) > 1)
 
   and 1 = 1
 ;
--- 选中并插入 （NLG 无预先填充的分单人员）
+-- 查找保单号重复的
+select `Policy #`
+from NLG_Policy_List_NewBusiness
+group by `Policy #`
+having count(`Policy #`) > 1;
+
+-- 检查NLG 产品是否都在产品表中
+select NLG_Policy_List_NewBusiness.Product as Product_Name
+from NLG_Policy_List_NewBusiness
+where true
+
+  and NLG_Policy_List_NewBusiness.Product not in (select Product_Type.Product_Name from Product_Type)
+
+  and true;
+
+
+-- 正式插入 汇总表 FullTable_Combine
 INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount, Status,
                                Product_Name, Writing_Agent)
 SELECT NLG_Policy_List_NewBusiness.submitted_date        as SubmitDate,
@@ -95,28 +92,13 @@ SELECT NLG_Policy_List_NewBusiness.submitted_date        as SubmitDate,
        NLG_Policy_List_NewBusiness.Product               as Product_Name,
        NLG_Policy_List_NewBusiness.Agent                 as Writing_Agent
 FROM NLG_Policy_List_NewBusiness
-         join Product_Type
-              on Product_Type.Product_Name = NLG_Policy_List_NewBusiness.Product
-         join Company_Name
-              on Company_Name.FullName = 'National Life Group'
-
-where 1 = 1
-
-#   and submitted_date
-#     > '2023-02-01'
-#   and submitted_date
-#     < '2023-02-28'
-
-  and not `Policy #` = (select `Policy #`
-                        from NLG_Policy_List_NewBusiness
-                        group by `Policy #`
-                        having count(`Policy #`) > 1)
-
-  and 1 = 1
+         left join Product_Type
+                   on Product_Type.Product_Name = NLG_Policy_List_NewBusiness.Product
+         left join Company_Name
+                   on Company_Name.FullName = 'National Life Group'
 ;
 
-update FullTable_Combine
-set FullTable_Combine.Have_Split_Agent = 0
-where FullTable_Combine.Split_Agnet IS NULL;
+
+
 
 
