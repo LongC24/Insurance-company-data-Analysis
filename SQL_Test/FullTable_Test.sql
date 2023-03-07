@@ -13,7 +13,7 @@ WHERE FullTable_Combine.Policy_ID = (select *
 
 
 -- 计算重复保单号的数量
-select Policy_ID, count(Policy_ID) as count
+select Policy_ID, count(Policy_ID) as count, Writing_Agent
 from FullTable_Combine
 group by Policy_ID
 having count(Policy_ID) > 1;
@@ -42,6 +42,39 @@ group by FullTable_Combine.Policy_ID
 having count(FullTable_Combine.Policy_ID) > 1;
 
 
+SELECT BA_policy_list.`Agent Name`,
+       Allianz_Life.`Writing Agent Name`,
+       Allianz_Annuity.`Writing Agent Name`
+FROM BA_policy_list
+         left join Allianz_Life on BA_policy_list.`Policy Number` = Allianz_Life.`Policy Number`
+         left join Allianz_Annuity on BA_policy_list.`Policy Number` = Allianz_Annuity.`Policy Number`
 
+where Carrier = 'Allianz Life'
+#   and BA_policy_list.`Policy Number` = (select Policy_ID
+#                                         from FullTable_Combine
+#                                         group by Policy_ID
+#                                         having count(Policy_ID) > 1)
+;
+
+select Policy_ID
+from FullTable_Combine
+group by Policy_ID
+having count(Policy_ID) > 1;
+
+
+SELECT *
+from BA_policy_list
+where BA_policy_list.`Policy Number` = (select Policy_ID
+                                        from FullTable_Combine
+                                        group by Policy_ID
+                                        having count(Policy_ID) > 1);
+
+
+-- 插入 总表时 应该处理如果在BA 中 没有找到的情况  应该先用 Allianz 表中的数据先行插入
+select *
+from BA_policy_list
+where BA_policy_list.`Policy Number`  in (select Allianz_Annuity.`Policy Number` from Allianz_Annuity)
+and BA_policy_list.`Policy Number` not in (select Allianz_Life.`Policy Number` from Allianz_Life)
+and BA_policy_list.Carrier = 'Allianz Life';
 
 
