@@ -1,3 +1,25 @@
+create table TOP.FullTable_Combine
+(
+    Submit_Date        date         not null,
+    Company_Name       varchar(100) null,
+    Insured_Name       varchar(255) not null comment '被保人',
+    Product_Type       varchar(100) null comment '产品类型_ 年金 人寿 Term',
+    Policy_ID          varchar(100) null,
+    Face_Amount        double       not null,
+    Policy_Status      varchar(100) null,
+    Product_Name       text         null,
+    Writing_Agent      varchar(255) not null,
+    Split_Agnet        text         null comment ': 用来分割 Split Agent',
+    Number_Split_Agent int          null,
+    Have_Split_Agent   tinyint(1)   null comment '0没有,1有, NO 0,Yes 1',
+    Split_Percentage   text         null comment 'ID:名字:百分比,ID:名字:百分比',
+    Common             text         null,
+    ID                 int auto_increment
+        primary key
+);
+
+
+
 -- 检测总表中是否有保单号重复的 如果重复检测 是否split agent 为 1 （即已经标记过为有有重复的人） 如果没有标记过 则标记为 1
 -- 需要使用嵌套 因为直接进行选择并不能直接选中
 UPDATE
