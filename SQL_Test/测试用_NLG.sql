@@ -80,30 +80,30 @@ where true
 
 
 -- 正式插入 汇总表 FullTable_Combine
-INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount, `Status`,
+INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Policy_Onwer, Product_Type, Policy_ID,
+                               Face_Amount, Policy_Status,
                                Product_Name, Writing_Agent)
 
 SELECT NLG_Policy_List_NewBusiness.submitted_date        as Submit_Date,   -- 递交日期
-       Company_Name.CommonName                           as Company_Name, -- 公司名称
-       NLG_Policy_List_NewBusiness.`Insured / Annuitant` as Insured_Name, -- 被保人姓名
-       Product_Type.Type                                 as Product_Type, -- 产品类型
-       NLG_Policy_List_NewBusiness.`Policy #`            as Policy_ID,    -- 保单号
-       NLG_Policy_List_NewBusiness.`Modal Premium`       as Face_Amount,  -- 面额
-       NLG_Policy_List_NewBusiness.Status                as Status,       -- 状态
-       NLG_Policy_List_NewBusiness.Product               as Product_Name, -- 产品名称
-       NLG_Policy_List_NewBusiness.Agent                 as Writing_Agent -- 代理人（写单人）
+       Company_Name.CommonName                           as Company_Name,  -- 公司名称
+       NLG_Policy_List_NewBusiness.`Insured / Annuitant` as Insured_Name,  -- 被保人姓名
+       NLG_Policy_List_NewBusiness.Owner                 as Policy_Onwer,  -- 持有人姓名
+       Product_Type.Type                                 as Product_Type,  -- 产品类型
+       NLG_Policy_List_NewBusiness.`Policy #`            as Policy_ID,     -- 保单号
+       NLG_Policy_List_NewBusiness.`Modal Premium`       as Face_Amount,   -- 面额
+       NLG_Policy_List_NewBusiness.Status                as Policy_Status, -- 状态
+       NLG_Policy_List_NewBusiness.Product               as Product_Name,  -- 产品名称
+       NLG_Policy_List_NewBusiness.Agent                 as Writing_Agent  -- 代理人（写单人）
 FROM NLG_Policy_List_NewBusiness
          left join Product_Type
                    on Product_Type.Product_Name = NLG_Policy_List_NewBusiness.Product -- 选定产品类型 （NLG表单没有预先填写产品类型 所以使用产品名字进行匹配）
          left join Company_Name
                    on Company_Name.FullName = 'National Life Group'-- 用于添加公司的新姓名缩写
-where true
-
-
-
-
-
-  and true
+ON DUPLICATE KEY UPDATE Submit_Date   = NLG_Policy_List_NewBusiness.submitted_date,
+                        Product_Type  = Product_Type.Type,
+                        Face_Amount   = NLG_Policy_List_NewBusiness.`Modal Premium`,
+                        Policy_Status = NLG_Policy_List_NewBusiness.Status,
+                        Product_Name  = NLG_Policy_List_NewBusiness.Product
 ;
 
 

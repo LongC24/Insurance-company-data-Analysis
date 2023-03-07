@@ -90,6 +90,9 @@ where 1 = 1
   and 1 = 1
 ;
 
+
+
+
 -- 查询是否有预先填入的分单人
 SELECT Allianz_Annuity.`Received Date`      as SubmitDate,
        Company_Name.CommonName              as Company_Name,
@@ -118,4 +121,7 @@ where 1 = 1
                                          from Allianz_Annuity
                                          group by Allianz_Annuity.`Policy Number`
                                          having count(Allianz_Annuity.`Policy Number`) > 1)
+
+
+
 

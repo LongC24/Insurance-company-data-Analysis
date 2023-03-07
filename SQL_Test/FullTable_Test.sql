@@ -15,7 +15,9 @@ create table TOP.FullTable_Combine
     Split_Percentage   text         null comment 'ID:名字:百分比,ID:名字:百分比',
     Common             text         null,
     ID                 int auto_increment
-        primary key
+        primary key,
+    constraint Policy_ID_Insured_Name_Writing_Agent_Combine_pk
+        unique (Policy_ID, Insured_Name, Writing_Agent)
 );
 
 
@@ -99,4 +101,9 @@ where BA_policy_list.`Policy Number`  in (select Allianz_Annuity.`Policy Number`
 and BA_policy_list.`Policy Number` not in (select Allianz_Life.`Policy Number` from Allianz_Life)
 and BA_policy_list.Carrier = 'Allianz Life';
 
+
+-- 更新名字 把Writing Agent 中删除逗号 让后全部改为大写
+UPDATE
+    FullTable_Combine
+SET FullTable_Combine.Writing_Agent = upper(replace(FullTable_Combine.Writing_Agent, ',', ''))
 

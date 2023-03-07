@@ -131,7 +131,7 @@ where 1 = 1
 ;
 
 
--- 查询BA的表 全部加入
+-- 查询BA的表
 select BA_policy_list.`Submitted Date`  as Submit_Date,
        Company_Name.CommonName          as Company_Name,
        BA_policy_list.`Applicant Name`  as Insured_Name,
@@ -175,8 +175,9 @@ group by BA_policy_list.`Policy Number`
 having count(BA_policy_list.`Policy Number`) > 1;
 
 
--- 插入总表中
-INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount, Status,
+-- 插入总表中 插入总表时先排除Allianz 的  然后单独插入Allianz 的
+INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount,
+                               Policy_Status,
                                Product_Name, Writing_Agent)
 select BA_policy_list.`Submitted Date`  as Submit_Date,
        Company_Name.CommonName          as Company_Name,
@@ -196,5 +197,5 @@ FROM BA_policy_list
          left join Company_Name
                    on BA_policy_list.Carrier = Company_Name.FullName
 
-where true
+where Company_Name != 'Allianz'
 ;
