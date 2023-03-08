@@ -82,32 +82,23 @@ where true
 
 
 -- 插入数据库
-INSERT INTO FullTable_Combine(Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount,
-                              Policy_Status,
+INSERT INTO FullTable_Combine(Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Policy_Status,
                               Product_Name, Writing_Agent)
-SELECT Allianz_Life.`Received Date`      as SubmitDate,
-       Company_Name.CommonName           as Company_Name,
-       Allianz_Life.`Insured Name`       as Insured_Name,
-       Product_Type.Type                 as Product_Type,
-       Allianz_Life.`Policy Number`      as Policy_ID,
-       Allianz_Life.`FaceAmount`         as Face_Amount,
-       Policy_Status.Status              as Status,
-       Allianz_Life.`Product`            as Product_Name,
-       Allianz_Life.`Writing Agent Name` as Writing_Agent
+SELECT Allianz_Life.`Received Date`          as SubmitDate,
+       Company_Name.CommonName               as Company_Name,
+       Allianz_Life.`Insured Annuitant Name` as Insured_Name,
+       Product_Type.Type                     as Product_Type,
+       Allianz_Life.`Policy Number`          as Policy_ID,
+       Allianz_Life.`Policy Status`          as Policy_Status,
+       Allianz_Life.`Product`                as Product_Name,
+       Allianz_Life.`Writing Agent Name`     as Writing_Agent
 
 FROM Allianz_Life
-         join Company_Name
-              on Company_Name.FullName = 'Allianz Life Insurance Company of North America'
-         join Product_Type
-              on Product_Type.Product_Name = Allianz_Life.`Product`
-         join Policy_Status
-              on Policy_Status.Status = 'Unknown'
-where 1 = 1
+         left join Company_Name
+                   on Company_Name.FullName = 'Allianz Life Insurance Company of North America'
+         left join Product_Type
+                   on Product_Type.Product_Name = Allianz_Life.`Product`
 
-  and Allianz_Life.`Received Date`
-    > '2000-01-10'
-  and Allianz_Life.`Received Date`
-    < '2023-03-20'
-
-  and 1 = 1
+on duplicate key update Submit_Date = Allianz_Life.`Received Date`,
+                        Policy_Status = Allianz_Life.`Policy Status`
 ;

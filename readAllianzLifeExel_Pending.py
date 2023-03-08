@@ -3,10 +3,9 @@
 
 # 文件预先处理后数据正确后 导出至CSV  然后导入数据库
 import pandas as pd
-import numpy as np
 
 # 文件名
-fileName = 'Allianz_Life'
+fileName = 'Allianz_Life_Pending'
 
 inputFile = 'importFile/' + fileName + '.xlsx'
 outputFile = 'exportFile/' + fileName + '.csv'
@@ -25,8 +24,8 @@ except Exception as e:
 # print(df.info())
 # set the row Received Date   type to date
 df['Received Date'] = pd.to_datetime(df['Received Date'])
-df['Accumulation Annuitization Value'] = df['Accumulation Annuitization Value'].str.replace('$', '').str.replace(',', '')
-df['Accumulation Annuitization Value'] = pd.to_numeric(df['Accumulation Annuitization Value'])
+df['FaceAmount'] = df['FaceAmount'].str.replace('$', '').str.replace(',', '')
+df['FaceAmount'] = pd.to_numeric(df['FaceAmount'])
 print(df.info())
 
 # Save the Excel file to  CSV
