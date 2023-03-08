@@ -188,7 +188,7 @@ select BA_policy_list.`Submitted Date`  as Submit_Date,
        If(Product_Type.Type = 'Annuity',
           BA_policy_list.`Modal Premium`,
           BA_policy_list.`Face Amount`) as Face_Amount,
-       BA_policy_list.Status            as Status,
+       BA_policy_list.Status            as Policy_Status,
        BA_policy_list.Plan              as Product_Name,
        BA_policy_list.`Agent Name`      as Writing_Agent
 FROM BA_policy_list

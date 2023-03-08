@@ -1,5 +1,3 @@
--- 测试用 BA
-
 -- 按照日期选中 Allianz  中 重要数据
 select `Received Date`, `Policy Number`, FaceAmount, `Writing Agent Name`, Product
 FROM Allianz_Life
@@ -73,9 +71,19 @@ where 1 = 1
 
   and 1 = 1;
 
+-- 检查Allianz 产品是否都在产品表中 （用于检测 万一有提交的新产品并不在） 但是Allianz  Life 只有一个产品 已经添加 应该返回值为 空
+SELECT Allianz_Life.`Product`
+FROM Allianz_Life
+where true
+
+  and Allianz_Life.`Product` not in (select Product_Type.Product_Name from Product_Type)
+
+  and true;
+
 
 -- 插入数据库
-INSERT INTO FullTable_Combine(Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount, Status,
+INSERT INTO FullTable_Combine(Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount,
+                              Policy_Status,
                               Product_Name, Writing_Agent)
 SELECT Allianz_Life.`Received Date`      as SubmitDate,
        Company_Name.CommonName           as Company_Name,
