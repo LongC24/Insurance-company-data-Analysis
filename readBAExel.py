@@ -4,7 +4,7 @@ import numpy as np
 
 # 文件名
 
-fileName = 'BA_6857374'
+fileName = '6885952'
 
 inputFile = 'importFile/' + fileName + '.xlsx'
 outputFile = 'exportFile/' + fileName+ '.csv'
