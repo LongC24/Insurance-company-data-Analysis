@@ -135,17 +135,17 @@ where 1 = 1
 select BA_policy_list.`Submitted Date`  as Submit_Date,
        Company_Name.CommonName          as Company_Name,
        BA_policy_list.`Applicant Name`  as Insured_Name,
-       Product_Type.Type                as Product_Type,
+       Product_Detail.Type              as Product_Type,
        -- 如果是年金那么 FaceAmount 是 0 需要用另外一个
-       If(Product_Type.Type = 'Annuity',
+       If(Product_Detail.Type = 'Annuity',
           BA_policy_list.`Modal Premium`,
           BA_policy_list.`Face Amount`) as Face_Amount,
        BA_policy_list.Status            as Status,
        BA_policy_list.Plan              as Product_Name,
        BA_policy_list.`Agent Name`      as Agent_Name
 FROM BA_policy_list
-         left join Product_Type
-                   on BA_policy_list.Plan = Product_Type.Product_Name
+         left join Product_Detail
+                   on BA_policy_list.Plan = Product_Detail.Product_Name
          left join Company_Name
                    on BA_policy_list.Carrier = Company_Name.FullName
 
@@ -164,9 +164,9 @@ from BA_policy_list
 where BA_policy_list.Carrier not in (select Company_Name.FullName from Company_Name);
 
 -- 检查是否有新的产品名字没有被加入 Product_Type 表中
-select BA_policy_list.Plan as Product_Name
+select BA_policy_list.Plan as Product_Name, BA_policy_list.Carrier as Company_Name
 from BA_policy_list
-where BA_policy_list.Plan not in (select Product_Type.Product_Name from Product_Type);
+where BA_policy_list.Plan not in (select Product_Detail.Product_Name from Product_Detail);
 
 -- 检查是否有Policy Number 重复的
 select BA_policy_list.`Policy Number` as Policy_Number
@@ -175,27 +175,27 @@ group by BA_policy_list.`Policy Number`
 having count(BA_policy_list.`Policy Number`) > 1;
 
 
--- 插入总表中 插入总表时先排除Allianz 的  然后单独插入Allianz 的
+-- 插入总表中
 INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount,
                                Policy_Status,
                                Product_Name, Writing_Agent)
 select BA_policy_list.`Submitted Date`  as Submit_Date,
        Company_Name.CommonName          as Company_Name,
        BA_policy_list.`Applicant Name`  as Insured_Name,
-       Product_Type.Type                as Product_Type,
+       Product_Detail.Type              as Product_Type,
        BA_policy_list.`Policy Number`   as Policy_ID,
        -- 如果是年金那么 FaceAmount 是 0 需要用另外一个
-       If(Product_Type.Type = 'Annuity',
+       If(Product_Detail.Type = 'Annuity',
           BA_policy_list.`Modal Premium`,
           BA_policy_list.`Face Amount`) as Face_Amount,
        BA_policy_list.Status            as Policy_Status,
        BA_policy_list.Plan              as Product_Name,
        BA_policy_list.`Agent Name`      as Writing_Agent
 FROM BA_policy_list
-         left join Product_Type
-                   on BA_policy_list.Plan = Product_Type.Product_Name
+         left join Product_Detail
+                   on BA_policy_list.Plan = Product_Detail.Product_Name
          left join Company_Name
                    on BA_policy_list.Carrier = Company_Name.FullName
-
-where Company_Name != 'Allianz'
+on duplicate key update FullTable_Combine.Submit_Date   = BA_policy_list.`Submitted Date`,
+                        FullTable_Combine.Policy_Status = BA_policy_list.Status
 ;

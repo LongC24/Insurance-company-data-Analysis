@@ -1,14 +1,17 @@
+-- 从Allianz 年金 TP数据库中 选取出 Alex单子
 SELECT `Received Date`, `Insured Annuitant Name`, `Owner Name`, Product, `Policy Number`, `Policy Status`
 from TOP.Allianz_Annuity
 where `Policy Number` in (select number
                           from baoxian_sys_db.bx_newinforcetp
                           where user_id = 300078);
 
+-- 从 Allianz Life TP数据库中 选取出 Alex单子
 SELECT `Received Date`, `Insured Annuitant Name`, `Owner Name`, Product, `Policy Number`, `Policy Status`
 from TOP.Allianz_Life
 where `Policy Number` in (select number
                           from baoxian_sys_db.bx_newinforcetp
                           where user_id = 300078);
+-- 从NLG 数据库中选取 Alex单子 （通过和 数据库对比）
 insert into TOP.Alex_Policy
 SELECT any_value(`Issue Date`),
        any_value(`Insured / Annuitant`),
@@ -31,17 +34,6 @@ group by `Policy #`;
 # from baoxian_sys_db.bx_order
 # where share_rate like '%300078%'
 # ;
-
-
-SELECT CASE
-           WHEN RIGHT(number, 2) = '00' THEN LEFT(number, LENGTH(number) - 2)
-           ELSE number
-           END
-from (select number
-      from baoxian_sys_db.bx_newinforcetp
-      where user_id = 300078
-      GROUP BY number) nu
-;
 
 
 SELECT *
@@ -86,7 +78,7 @@ select count(app_name), policy_number, any_value(status), any_value(phone), any_
 from TOP.Alex_Policy
 group by policy_number;
 
-
+-- 如果是00结尾的，就去掉00
 SELECT IF(RIGHT(`number`, 2) = '00', LEFT(`number`, LENGTH(`number`) - 2), `number`)
 from (select `number`
       from baoxian_sys_db.bx_newinforcetp
@@ -100,7 +92,7 @@ where user_id = 300078
   and IF(RIGHT(`number`, 2) = '00', LEFT(`number`, LENGTH(`number`) - 2), `number`) not in
       (select policy_number from TOP.Alex_Policy);
 
-
+-- 查找哪些保单号是重复的
 select count(id), number
 from baoxian_sys_db.bx_newinforcetp
 where user_id = 300078

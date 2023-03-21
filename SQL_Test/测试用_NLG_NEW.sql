@@ -39,9 +39,9 @@ group by submitted_date
 
 --  正式读取需要的数据 NLG
 SELECT NLG_NEW.submitted_date        as SubmitDate,
-       Company_Name.CommonName                           as Company_Name,
+       Company_Name.CommonName       as Company_Name,
        NLG_NEW.`Insured / Annuitant` as Client,
-       Product_Detail.Type                                 as Product_Type,
+       Product_Detail.Type           as Product_Type,
        NLG_NEW.`Policy #`            as Policy_ID,
        NLG_NEW.`Modal Premium`       as Face_Amount,
        NLG_NEW.Status                as Status,
@@ -85,10 +85,10 @@ INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Policy_O
                                Product_Name, Writing_Agent)
 
 SELECT NLG_NEW.submitted_date        as Submit_Date,   -- 递交日期
-       Company_Name.CommonName                           as Company_Name,  -- 公司名称
+       Company_Name.CommonName       as Company_Name,  -- 公司名称
        NLG_NEW.`Insured / Annuitant` as Insured_Name,  -- 被保人姓名
        NLG_NEW.Owner                 as Policy_Onwer,  -- 持有人姓名
-       Product_Detail.Type                                 as Product_Type,  -- 产品类型
+       Product_Detail.Type           as Product_Type,  -- 产品类型
        NLG_NEW.`Policy #`            as Policy_ID,     -- 保单号
        NLG_NEW.`Modal Premium`       as Face_Amount,   -- 面额
        NLG_NEW.Status                as Policy_Status, -- 状态
@@ -100,7 +100,7 @@ FROM NLG_NEW
          left join Company_Name
                    on Company_Name.FullName = 'National Life Group'-- 用于添加公司的新姓名缩写
 ON DUPLICATE KEY UPDATE Submit_Date   = NLG_NEW.submitted_date,
-                        Product_Type  = Product_Type.Type,
+                        Product_Type  = Product_Detail.Type,
                         Face_Amount   = NLG_NEW.`Modal Premium`,
                         Policy_Status = NLG_NEW.Status,
                         Product_Name  = NLG_NEW.Product
