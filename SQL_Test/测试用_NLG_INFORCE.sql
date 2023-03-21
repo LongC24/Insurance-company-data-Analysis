@@ -69,10 +69,25 @@ INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Policy_O
                                Face_Amount, Policy_Status,
                                Product_Name, Writing_Agent)
 
-
-ON DUPLICATE KEY UPDATE Submit_Date   = NLG_INFORCE.submitted_date,
-                        Product_Type  = Product_Type.Type,
-                        Face_Amount   = NLG_INFORCE.`Modal Premium`,
+SELECT NLG_INFORCE.`Issue Date`          as SubmitDate,
+       Company_Name.CommonName           as Company_Name,
+       NLG_INFORCE.`Insured / Annuitant` as Client,
+       NLG_INFORCE.Owner                 as Policy_Onwer,
+       Product_Detail.Type               as Product_Type,
+       NLG_INFORCE.`Policy #`            as Policy_ID,
+       null                              as Face_Amount,
+       NLG_INFORCE.Status                as Status,
+       NLG_INFORCE.Product               as Product_Name,
+       NLG_AGENT_LIST.AGENT_NAME         as Writing_Agent
+FROM NLG_INFORCE
+         left join NLG_AGENT_LIST
+                   on NLG_AGENT_LIST.AGENT_ID = NLG_INFORCE.`Agent #`
+         left join Product_Detail
+                   on Product_Detail.Product_Name = NLG_INFORCE.Product
+         left join Company_Name
+                   on Company_Name.FullName = 'National Life Group'
+ON DUPLICATE KEY UPDATE Submit_Date   = NLG_INFORCE.`Issue Date` ,
+                        Product_Type  = Product_Detail.Type,
                         Policy_Status = NLG_INFORCE.Status,
                         Product_Name  = NLG_INFORCE.Product
 ;
