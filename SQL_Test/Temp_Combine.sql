@@ -15,10 +15,10 @@ SELECT any_value(`Issue Date`),
        any_value(`Owner`),
        any_value(`Product`),
        `Policy #`,
-       any_value(NLG_All.Status),
+       any_value(NLG_INFORCE.Status),
        any_value(`Owner Phone`),
        any_value(`Owner Email`)
-from TOP.NLG_All
+from TOP.NLG_INFORCE
 where `Policy #` in
       (SELECT IF(RIGHT(`number`, 2) = '00', LEFT(`number`, LENGTH(`number`) - 2), `number`)
        from (select `number`
@@ -45,7 +45,7 @@ from (select number
 
 
 SELECT *
-from TOP.NLG_All
+from TOP.NLG_INFORCE
 where `Policy #` in
       (SELECT CASE
                   WHEN RIGHT(number, 2) = '00' THEN LEFT(number, LENGTH(number) - 2)
