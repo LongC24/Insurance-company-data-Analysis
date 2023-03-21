@@ -9,20 +9,21 @@ cursor = db.cursor()
 # 使用 execute()  方法执行 SQL 查询
 # cursor.execute("SELECT VERSION()")
 
-cursor.execute("""
+cursor.execute("Use TOP;")
 
+cursor.execute("""
 SELECT NLG_Policy_List_NewBusiness.submitted_date        as SubmitDate,
        Company_Name.CommonName                           as Company_Name,
        NLG_Policy_List_NewBusiness.`Insured / Annuitant` as Client,
-       Product_Type.Type                                 as Product_Type,
+       Product_Detail.Type                                 as Product_Type,
        NLG_Policy_List_NewBusiness.`Policy #`            as Policy_ID,
        NLG_Policy_List_NewBusiness.`Modal Premium`       as Face_Amount,
        NLG_Policy_List_NewBusiness.Status                as Status,
        NLG_Policy_List_NewBusiness.Product               as Product_Name,
     NLG_Policy_List_NewBusiness.Agent                 as Writing_Agent
 FROM NLG_Policy_List_NewBusiness
-         join Product_Type
-              on Product_Type.Product_Name = NLG_Policy_List_NewBusiness.Product
+         join Product_Detail
+              on Product_Detail.Product_Name = NLG_Policy_List_NewBusiness.Product
          join Company_Name
               on Company_Name.FullName = 'National Life Group'
 
@@ -50,20 +51,7 @@ for data in cursor.fetchall():
 # data = cursor.fetchone()
 # print("Database version : %s " % data)
 
-data = {
-    'id': '20180606',
-    'name': 'Lily',
-    'age': 20
-}
-table = 'FullTable_Combine'
-sql = 'INSERT INTO {table}({keys}) VALUES ({values})'.format(table=table, keys=keys, values=values)
-try:
-    cursor.execute(sql, tuple(data.values()))
-    print('Successful')
-    db.commit()
-except:
-    print('Failed')
-    db.rollback()
+
 cursor.close()
 
 # 关闭数据库连接

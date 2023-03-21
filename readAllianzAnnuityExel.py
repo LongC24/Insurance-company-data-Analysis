@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 # 文件名
-fileName = 'Allianz_Annuity'
+fileName = 'Allianz_Annuity_All'
 
 inputFile = 'importFile/' + fileName + '.xlsx'
 outputFile = 'exportFile/' + fileName + '.csv'
