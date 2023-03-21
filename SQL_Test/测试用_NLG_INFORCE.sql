@@ -1,20 +1,7 @@
 -- 测试用 BA
 # NLG_INFORCE
 
-# NLG_INFORCE
--- 按照日期选中 NLG 重要数据
-select `Issue Date`, `Policy #`, `Insured / Annuitant`, `Modal Premium`, Product, Agent
-FROM NLG_INFORCE
-where 1 = 1
 
-  and `Issue Date`
-    > '2023-02-01'
-  and `Issue Date`
-    < '2023-02-28'
-
-  and 1 = 1
-order by `Issue Date`
-;
 
 -- 单独查询其中有哪些保单是重复的（预先分单）
 select `Policy #`
@@ -86,11 +73,10 @@ FROM NLG_INFORCE
                    on Product_Detail.Product_Name = NLG_INFORCE.Product
          left join Company_Name
                    on Company_Name.FullName = 'National Life Group'
-ON DUPLICATE KEY UPDATE Submit_Date   = NLG_INFORCE.`Issue Date` ,
-                        Product_Type  = Product_Detail.Type,
-                        Policy_Status = NLG_INFORCE.Status,
-                        Product_Name  = NLG_INFORCE.Product
-;
+ON DUPLICATE KEY UPDATE FullTable_Combine.Effective_Date   = NLG_INFORCE.`Issue Date` ,
+                        FullTable_Combine.Product_Type  = Product_Detail.Type,
+                        FullTable_Combine.Policy_Status = NLG_INFORCE.Status,
+                        FullTable_Combine.Product_Name  = NLG_INFORCE.Product;
 
 
 
