@@ -176,10 +176,11 @@ having count(BA_policy_list.`Policy Number`) > 1;
 
 
 -- 插入总表中
-INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount,
+INSERT INTO FullTable_Combine (Submit_Date,Effective_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Face_Amount,
                                Policy_Status,
                                Product_Name, Writing_Agent)
 select BA_policy_list.`Submitted Date`  as Submit_Date,
+       BA_policy_list.`Policy Eff Date` as Effective_Date,
        Company_Name.CommonName          as Company_Name,
        BA_policy_list.`Applicant Name`  as Insured_Name,
        Product_Detail.Type              as Product_Type,
@@ -197,5 +198,6 @@ FROM BA_policy_list
          left join Company_Name
                    on BA_policy_list.Carrier = Company_Name.FullName
 on duplicate key update FullTable_Combine.Submit_Date   = BA_policy_list.`Submitted Date`,
+                        FullTable_Combine.Effective_Date = BA_policy_list.`Policy Eff Date`,
                         FullTable_Combine.Policy_Status = BA_policy_list.Status
 ;

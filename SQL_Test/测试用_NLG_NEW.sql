@@ -79,12 +79,12 @@ where true
   and true;
 
 
--- 正式插入 汇总表 FullTable_Combine
+-- 正式插入 汇总表 FullTable_Combine  （注意：这里的NLG_NEW.submitted_date 提交日期 不是生效日期）
 INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Policy_Onwer, Product_Type, Policy_ID,
                                Face_Amount, Policy_Status,
                                Product_Name, Writing_Agent)
 
-SELECT NLG_NEW.submitted_date        as Submit_Date,   -- 递交日期
+SELECT NLG_NEW.submitted_date        as Submit_Date,   -- 生效日期
        Company_Name.CommonName       as Company_Name,  -- 公司名称
        NLG_NEW.`Insured / Annuitant` as Insured_Name,  -- 被保人姓名
        NLG_NEW.Owner                 as Policy_Onwer,  -- 持有人姓名

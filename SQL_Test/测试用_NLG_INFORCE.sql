@@ -65,22 +65,22 @@ where true
 
 
 -- 正式插入 汇总表 FullTable_Combine
-INSERT INTO FullTable_Combine (Submit_Date, Company_Name, Insured_Name, Policy_Onwer, Product_Type, Policy_ID,
+INSERT INTO FullTable_Combine (Effective_Date, Company_Name, Insured_Name, Policy_Onwer, Product_Type, Policy_ID,
                                Face_Amount, Policy_Status,
                                Product_Name, Writing_Agent)
 
-SELECT NLG_INFORCE.`Issue Date`          as SubmitDate,
-       Company_Name.CommonName           as Company_Name,
-       NLG_INFORCE.`Insured / Annuitant` as Client,
-       NLG_INFORCE.Owner                 as Policy_Onwer,
-       Product_Detail.Type               as Product_Type,
-       NLG_INFORCE.`Policy #`            as Policy_ID,
-       null                              as Face_Amount,
-       NLG_INFORCE.Status                as Status,
-       NLG_INFORCE.Product               as Product_Name,
-       NLG_AGENT_LIST.AGENT_NAME         as Writing_Agent
+SELECT NLG_INFORCE.`Issue Date`          as Effective_Date, -- 生效日期 (暂时没有提交日期)
+       Company_Name.CommonName           as Company_Name,-- 公司名称
+       NLG_INFORCE.`Insured / Annuitant` as Client, -- 客户名称
+       NLG_INFORCE.Owner                 as Policy_Onwer, -- 保单所有人
+       Product_Detail.Type               as Product_Type, -- 产品类型
+       NLG_INFORCE.`Policy #`            as Policy_ID, -- 保单号
+       null                              as Face_Amount, -- 保额
+       NLG_INFORCE.Status                as Status, -- 保单状态
+       NLG_INFORCE.Product               as Product_Name, -- 产品名称
+       NLG_AGENT_LIST.AGENT_NAME         as Writing_Agent   -- Agent
 FROM NLG_INFORCE
-         left join NLG_AGENT_LIST
+         left join NLG_AGENT_LIST -- Agent 匹配
                    on NLG_AGENT_LIST.AGENT_ID = NLG_INFORCE.`Agent #`
          left join Product_Detail
                    on Product_Detail.Product_Name = NLG_INFORCE.Product
