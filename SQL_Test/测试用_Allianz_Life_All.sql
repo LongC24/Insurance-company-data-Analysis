@@ -82,23 +82,28 @@ where true
 
 
 -- 插入数据库
-INSERT INTO FullTable_Combine(Submit_Date, Company_Name, Insured_Name, Product_Type, Policy_ID, Policy_Status,
+INSERT INTO FullTable_Combine(Submit_Date, Effective_Date, Company_Name, Insured_Name, Policy_Onwer, Product_Type,
+                              Policy_ID,
+                              Policy_Status,
                               Product_Name, Writing_Agent)
-SELECT Allianz_Life.`Received Date`          as SubmitDate,
-       Company_Name.CommonName               as Company_Name,
-       Allianz_Life.`Insured Annuitant Name` as Insured_Name,
-       Product_Type.Type                     as Product_Type,
-       Allianz_Life.`Policy Number`          as Policy_ID,
-       Allianz_Life.`Policy Status`          as Policy_Status,
-       Allianz_Life.`Product`                as Product_Name,
-       Allianz_Life.`Writing Agent Name`     as Writing_Agent
+SELECT Allianz_Life.`Received Date`          as SubmitDate,     -- 提交日期
+       Allianz_Life.`Policy Effective Date`  as Effective_Date, -- 日期
+       Company_Name.CommonName               as Company_Name,   -- 公司名
+       Allianz_Life.`Insured Annuitant Name` as Insured_Name,   -- 被保人
+       Allianz_Life.`Owner Name`             as Policy_Onwer,   -- 保单所有人
+       Product_Detail.Type                   as Product_Type,   -- 产品类型
+       Allianz_Life.`Policy Number`          as Policy_ID,      -- 保单号
+       Allianz_Life.`Policy Status`          as Policy_Status,  -- 保单状态
+       Allianz_Life.`Product`                as Product_Name,   -- 产品名
+       Allianz_Life.`Writing Agent Name`     as Writing_Agent   -- 代理人
 
 FROM Allianz_Life
          left join Company_Name
                    on Company_Name.FullName = 'Allianz Life Insurance Company of North America'
-         left join Product_Type
-                   on Product_Type.Product_Name = Allianz_Life.`Product`
+         left join Product_Detail
+                   on Product_Detail.Product_Name = Allianz_Life.`Product`
 
-on duplicate key update Submit_Date = Allianz_Life.`Received Date`,
-                        Policy_Status = Allianz_Life.`Policy Status`
+on duplicate key update Submit_Date    = Allianz_Life.`Received Date`,
+                        Effective_Date = Allianz_Life.`Policy Effective Date`,
+                        Policy_Status  = Allianz_Life.`Policy Status`
 ;

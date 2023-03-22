@@ -95,10 +95,11 @@ SELECT NLG_NEW.submitted_date        as Submit_Date,   -- 生效日期
        NLG_NEW.Product               as Product_Name,  -- 产品名称
        NLG_NEW.Agent                 as Writing_Agent  -- 代理人（写单人）
 FROM NLG_NEW
-         left join Product_Detail
-                   on Product_Detail.Product_Name = NLG_NEW.Product -- 选定产品类型 （NLG表单没有预先填写产品类型 所以使用产品名字进行匹配）
-         left join Company_Name
-                   on Company_Name.FullName = 'National Life Group'-- 用于添加公司的新姓名缩写
+         join Product_Detail
+              on Product_Detail.Product_Name = NLG_NEW.Product -- 选定产品类型 （NLG表单没有预先填写产品类型 所以使用产品名字进行匹配）
+         join Company_Name
+              on Company_Name.FullName = 'National Life Group'
+-- 用于添加公司的新姓名缩写
 ON DUPLICATE KEY UPDATE Submit_Date   = NLG_NEW.submitted_date,
                         Product_Type  = Product_Detail.Type,
                         Face_Amount   = NLG_NEW.`Modal Premium`,
