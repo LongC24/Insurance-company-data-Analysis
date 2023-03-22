@@ -4,7 +4,7 @@ host = 'localhost'
 user = 'Test_User'
 password = '1234567890@'
 database = 'TOP'
-
+# 定义一个列表，包含需要查询的列名
 Column = ['Submit_Date', 'Company_Name', 'Insured_Name', 'Product_Type', 'Product_Name', 'Policy_ID', 'Face_Amount',
           'Policy_Status', 'Writing_Agent']
 
@@ -58,3 +58,5 @@ def double_submit_date(start_date, end_date):
             sql += " "
     sql += "from TOP.FullTable_Combine where Submit_Date between '" + start_date + "' and '" + end_date + "'"
     return execute_sql(sql)
+
+

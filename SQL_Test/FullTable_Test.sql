@@ -107,3 +107,25 @@ UPDATE
     FullTable_Combine
 SET FullTable_Combine.Writing_Agent = upper(replace(FullTable_Combine.Writing_Agent, ',', ''))
 
+
+UPDATE FullTable_Combine
+SET Insured_Name = TRIM(SUBSTR(Insured_Name, 1, INSTR(Insured_Name, ',') - 1)) OR SUBSTR(Insured_Name, INSTR(Insured_Name, ','))
+WHERE Insured_Name LIKE ' %';
+
+
+UPDATE FullTable_Combine
+SET Insured_Name = REPLACE(Insured_Name, ' ', '')
+WHERE Insured_Name LIKE '%,%'
+
+UPDATE FullTable_Combine
+SET Insured_Name = TRIM(SUBSTR(Insured_Name, 1, INSTR(Insured_Name, ',') - 1)) OR SUBSTR(Insured_Name, INSTR(Insured_Name, ','))
+WHERE Insured_Name LIKE ' %';
+
+
+UPDATE FullTable_Combine
+SET Insured_Name = REPLACE(Insured_Name, ' ', ',')
+WHERE Insured_Name LIKE '% %';
+
+
+UPDATE FullTable_Combine
+SET Insured_Name = UPPER(Insured_Name)
