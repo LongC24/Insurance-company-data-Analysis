@@ -106,8 +106,6 @@ def generate_dates(start_date: str, end_date: str):
 
 
 # 输入2个日期 首先判断距离起始日期最近的周一  然后判断距离结束日期最近的周日 然后生成这2个日期之间的所有周一和周日
-
-
 def get_mondays_and_sundays(start_date: str, end_date: str):
     """
         输入2个日期 首先判断距离起始日期最近的周一 然后判断距离结束日期最近的周日 然后生成这2个日期之间的所有周一和周日
