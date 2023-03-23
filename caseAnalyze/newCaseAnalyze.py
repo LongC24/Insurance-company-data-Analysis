@@ -37,7 +37,7 @@ def pt_range_date_print(start_date, end_date, debug=False):
         print(table)
 
 
-def write_excel_weeks_with_data(start_date, end_date, file_name, file_path='./exportFile/', debug=False):
+def write_excel_weeks_with_data(start_date, end_date, file_name='WeekReport', file_path='./exportFile/', debug=False):
     wb = Workbook()
     # 获取所有的周一和周日
     monday, sunday = datesGenerate.get_mondays_and_sundays(start_date, end_date)
@@ -61,6 +61,8 @@ def write_excel_weeks_with_data(start_date, end_date, file_name, file_path='./ex
         # 在工作表中第一行写入这一周有多少人交单（既有多少行）
         weeks_count = "本周交单数量： " + str(len(date))
         ws.cell(row=1, column=1, value=weeks_count)
+        # 把第一行 前10个格子合并成一个
+        ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=9)
 
         # 在工作表中第二行写入列名
         for i in range(len(cdb.Column)):
@@ -91,4 +93,5 @@ def write_excel_weeks_with_data(start_date, end_date, file_name, file_path='./ex
 if __name__ == '__main__':
     # pt_single_date_print('2023-02-09')
     # pt_range_date_print('2022-01-01', '2023-03-28')
-    write_excel_weeks_with_data('2022-03-01', '2023-03-28', 'test', file_path='./exportFile/', debug=False)
+    write_excel_weeks_with_data('2022-03-01', '2023-04-01', file_name='WeekReport', file_path='./exportFile/',
+                                debug=True)
