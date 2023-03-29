@@ -9,7 +9,7 @@ def get_file_name(path):  # 获取文件夹下的文件名
     return files_names
 
 
-importFile = 'importFile'  # 导入文件夹名字
+importFile = '../importFile'  # 导入文件夹名字
 files_name = get_file_name(importFile)
 print(files_name)
 
@@ -19,8 +19,8 @@ for file in files_name:
     if re.match(r'^\d{4}', file):
         file_name_BA = file
 
-inputFile = 'importFile/' + file_name_BA
-outputFile = 'exportFile/' + file_name_BA + '.csv'
+inputFile = '../importFile/' + file_name_BA
+outputFile = '../exportFile/' + file_name_BA + '.csv'
 
 # Read the Excel file
 df = pd.read_excel(inputFile, sheet_name='Hierarchy Submitted Application')

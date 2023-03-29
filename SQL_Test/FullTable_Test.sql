@@ -115,7 +115,7 @@ WHERE Insured_Name LIKE ' %';
 
 UPDATE FullTable_Combine
 SET Insured_Name = REPLACE(Insured_Name, ' ', '')
-WHERE Insured_Name LIKE '%,%'
+WHERE Insured_Name LIKE '%,%';
 
 UPDATE FullTable_Combine
 SET Insured_Name = TRIM(SUBSTR(Insured_Name, 1, INSTR(Insured_Name, ',') - 1)) OR SUBSTR(Insured_Name, INSTR(Insured_Name, ','))

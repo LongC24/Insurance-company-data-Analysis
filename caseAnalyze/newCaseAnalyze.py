@@ -59,7 +59,7 @@ def write_excel_weeks_with_data(start_date, end_date, file_name='WeekReport', fi
             print(date)
 
         # 在工作表中第一行写入这一周有多少人交单（既有多少行）
-        weeks_count = "本周交单数量： " + str(len(date))
+        weeks_count = sheet_name + " 本周交单数量： " + str(len(date))
         ws.cell(row=1, column=1, value=weeks_count)
         # 把第一行 前10个格子合并成一个
         ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=9)
@@ -93,5 +93,5 @@ def write_excel_weeks_with_data(start_date, end_date, file_name='WeekReport', fi
 if __name__ == '__main__':
     # pt_single_date_print('2023-02-09')
     # pt_range_date_print('2022-01-01', '2023-03-28')
-    write_excel_weeks_with_data('2022-03-01', '2023-04-01', file_name='WeekReport', file_path='./exportFile/',
+    write_excel_weeks_with_data('2023-02-01', '2023-03-25', file_name='WeekReport', file_path='./exportFile/',
                                 debug=True)
