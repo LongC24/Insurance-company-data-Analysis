@@ -1,3 +1,5 @@
+-- 完整的插入脚本
+
 -- 正式插入 Allianz Annuity
 INSERT INTO FullTable_Combine (Submit_Date, Effective_Date, Company_Name, Insured_Name, Policy_Onwer, Product_Type,
                                Policy_ID,
@@ -140,3 +142,5 @@ on duplicate key update FullTable_Combine.Submit_Date    = BA_policy_list.`Submi
                         FullTable_Combine.Effective_Date = BA_policy_list.`Policy Eff Date`,
                         FullTable_Combine.Policy_Status  = BA_policy_list.Status
 ;
+
+Update TOP.shuxun_temp set split_agent  = 'Min Fei Zheng:100%' where Policy_Number = 'LS1319846';
